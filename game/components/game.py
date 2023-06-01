@@ -4,12 +4,14 @@ import pygame
 from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE,MUSIC_1
 from game.components.spaceship import Spaceship
 from game.components.enemis.enemy_manage import EnemyManager
+from game.components.bullets.bullet_manager import BulletManager
+
 class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load(MUSIC_1)
-        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.set_volume(0.0)
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -20,6 +22,7 @@ class Game:
         self.y_pos_bg = 0
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()
+        self.bullet_manager = BulletManager()
         pygame.mixer.init()
 
     def run(self):
@@ -41,7 +44,8 @@ class Game:
     def update(self):
         user_input  = pygame.key.get_pressed()
         self.player.update(user_input)
-        self.enemy_manager.update()
+        self.enemy_manager.update(self)
+        self.bullet_manager.update(self)
 
 
 
@@ -51,6 +55,7 @@ class Game:
         self.draw_background()
         self.player.draw(self.screen)
         self.enemy_manager.draw(self.screen)
+        self.bullet_manager.draw(self.screen)
 
         pygame.display.update()
         #pygame.display.flip()

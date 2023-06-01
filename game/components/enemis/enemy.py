@@ -2,7 +2,9 @@ import pygame
 import random
 
 from pygame.sprite import Sprite
+from game.components.bullets import bullet_manager
 from game.utils.constants import ENEMY_1,SCREEN_HEIGHT,SCREEN_WIDTH,ENEMY_2,ENEMY_3,ENEMY_4
+from game.components.bullets.bullet import Bullet
 
 class Enemy(Sprite):
     ENEMY_WIDTH = 40
@@ -11,36 +13,46 @@ class Enemy(Sprite):
     ENEMY_HEIGHT2 = 80
     ENEMY_WIDTH3 = 80
     ENEMY_HEIGHT3 = 100
-    ENEMY_WIDTH4 = 120
-    ENEMY_HEIGHT4 = 140
+    ENEMY_WIDTH4 = 160
+    ENEMY_HEIGHT4 = 180
 
     Y_POS = 5
     X_POS_LIST = [50,100,150,200,250,300,350,400,450,500,550]
     X_POS_LIST2 = [25,75,125,175,225,275,325,375,425,475,524] 
-    X_POS_LIST3 = [35,90,50,300,255,90,67,38,440,475,524] 
+    X_POS_LIST3 = [654,750,499,800,999,1000,850,600,440,475,524] 
     X_POS_LIST4 = [1000,900,850,750] 
+
     SPEED_Y = 2
     SPEED_X = 30
+
     SPEED_Y2 = 2
     SPEED_X2 = 5
+
     SPEED_Y3 = 3
-    SPEED_X3 = random.randint(1,7)
+    SPEED_X3 = 2
+
     SPEED_Y4 = 9
     SPEED_X4 = 3
     MOV_X = {0: 'left', 1: 'right' }
     MOV_X4 = {0: 'right', 1: 'left' }
+    IMAGE = { 1:ENEMY_1,2:ENEMY_2,3:ENEMY_3,4:ENEMY_4 }
 
-    def __init__(self):
-        self.image = ENEMY_1
+
+    
+
+    def __init__(self, image = 1, speed_x = SPEED_X, speed_y = SPEED_Y, move_x_for = [30,100]):
+        self.image = self.IMAGE[image]
         self.image = pygame.transform.scale(self.image,(self.ENEMY_WIDTH,self.ENEMY_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.x = self.X_POS_LIST[random.randint(0,10)]
         self.rect.y = self.Y_POS
-        self.speed_y = self.SPEED_Y
-        self.speed_x = self.SPEED_X
+        self.speed_y = speed_y
+        self.speed_x = speed_x
         self.movement_x = self.MOV_X[random.randint(0,1)]
-        self.move_x_for = random.randint(30,100)
+        self.move_x_for = random.randint(move_x_for[0], move_x_for[1])
         self.index = 0
+        self.type = 'enemy'
+        self.shooting_time = random.randint(30,50)
         
         self.image2 = ENEMY_2
         self.image2 = pygame.transform.scale(self.image2,(self.ENEMY_WIDTH2,self.ENEMY_HEIGHT2))
@@ -59,7 +71,6 @@ class Enemy(Sprite):
         self.rect3.y = self.Y_POS
         self.speed_y3 = self.SPEED_Y3
         self.speed_x3 = self.SPEED_X3
-        self.move_x_for_3 = random.randint(20,45)
 
         self.image4 = ENEMY_4
         self.image4 = pygame.transform.scale(self.image4, (self.ENEMY_WIDTH4, self.ENEMY_HEIGHT4))
@@ -73,7 +84,18 @@ class Enemy(Sprite):
         self.aux = 0    
 
 
-    def update(self, ships):
+        
+
+
+    def update(self, ships, game):
+        self.shoot(game.bullet_manager)
+
+
+
+
+
+
+
         self.rect.y += self.speed_y
         self.rect2.y += self.speed_y2
         self.rect3.y += self.speed_y3
@@ -118,7 +140,6 @@ class Enemy(Sprite):
     def  change_movement_x2(self):
         self.count +=1
         if (self.count > self.move_x_for_2 and self.rect.x <= 10):
-            self.movement_x = 'right'
             self.count = 0
 
     def  change_movement_x4(self):
@@ -126,8 +147,11 @@ class Enemy(Sprite):
         if (self.aux >= self.move_x_for_4 and self.movement_x_4 == 'right') or (self.rect4.x >= SCREEN_WIDTH - self.ENEMY_WIDTH4):
             self.movement_x4 = 'left'
             self.aux = 0
-        if (self.aux >= self.move_x_for_4 and self.movement_x_4 == 'left') or (self.rect4.x <= 10 ):
-            self.movement_x4 = 'right'
-            self.aux = 0
-        
 
+
+    def shoot(self, bullet_manager):
+        current_time = pygame.time.get_ticks()
+        if self.shooting_time <= current_time:
+            bullet = Bullet(self)
+            bullet_manager.add_bullet(bullet)
+            self.shooting_time += random.randint(30,50)
