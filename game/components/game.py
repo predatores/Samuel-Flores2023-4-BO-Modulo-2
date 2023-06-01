@@ -1,5 +1,6 @@
 import pygame.mixer
 import pygame
+from game.components.bullets import bullet_manager
 
 from game.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE,MUSIC_1
 from game.components.spaceship import Spaceship
@@ -43,7 +44,7 @@ class Game:
 
     def update(self):
         user_input  = pygame.key.get_pressed()
-        self.player.update(user_input)
+        self.player.update(user_input,self)
         self.enemy_manager.update(self)
         self.bullet_manager.update(self)
 

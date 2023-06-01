@@ -9,14 +9,18 @@ class EnemyManager:
         self.add_enemy()
 
         for enemy in self.enemies:
-            enemy.update(self.enemies, game) 
+            enemy.update(self.enemies, game)
+            if enemy.rect.colliderect(game.player.rect):
+                game.playing = False
+                break
+
 
     def draw(self,screen):
         for enemy in self.enemies :
             enemy.draw(screen)
 
     def add_enemy(self):
-        enemy_type = random.randint(1,2)
+        enemy_type = random.randint(1,4)
         if enemy_type ==1:
             enemy = Enemy()
         else:
@@ -24,8 +28,6 @@ class EnemyManager:
             y_speed = 2
             move_x_for = [50,120]
             enemy = Enemy(enemy_type, x_speed, y_speed, move_x_for)
-
-
         if len(self.enemies)  < 1:
             self.enemies.append(enemy)
 
