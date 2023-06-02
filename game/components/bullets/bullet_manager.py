@@ -33,9 +33,9 @@ class BulletManager:
             bullet.draw(screen)
 
     def add_bullet(self, bullet):
-        if bullet.owner == 'enemy' and len(self.enemy_bullets) < 3:
+        if bullet.owner == 'enemy' and len(self.enemy_bullets) < 5:
             self.enemy_bullets.append(bullet)   
-        elif bullet.owner == 'player' and len(self.bullets) < 2:
+        elif bullet.owner == 'player' and len(self.bullets) < 50:
             self.bullets.append(bullet)
 
     def reset(self):

@@ -1,9 +1,9 @@
 import pygame.mixer
 import pygame
 
-from game.utils.constants import BG, FONT_STYLE, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE,MUSIC_1
+from game.utils.constants import BG, FONT_STYLE, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS,MUSIC_1
 from game.components.spaceship import Spaceship
-from game.components.enemis.enemy_manage import EnemyManager
+from game.components.enemis.enemy_manager import EnemyManager
 from game.components.bullets.bullet_manager import BulletManager
 from game.components.menu import Menu
 
@@ -21,13 +21,14 @@ class Game:
         self.game_speed = 10
         self.x_pos_bg = 0
         self.y_pos_bg = 0
-        self.death_count = 0
-        self.score = 0
         self.player = Spaceship()
         self.enemy_manager = EnemyManager()
         self.bullet_manager = BulletManager()
         pygame.mixer.init()
         self.menu = Menu('press any key to start',self.screen)
+        self.death_count = 0
+        self.score = 0
+        self.max_score = 0
 
     def execute(self):
         self.running = True
@@ -70,9 +71,8 @@ class Game:
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
         self.draw_score()
-
         pygame.display.update()
-        #pygame.display.flip()
+        pygame.display.flip()
 
 
 
@@ -87,18 +87,23 @@ class Game:
         self.y_pos_bg += self.game_speed
 
     def show_menu(self):
-        half_screen_width = SCREEN_WIDTH // 2
-        half_screen_height = SCREEN_HEIGHT // 2
         self.menu.reset_screen_color(self.screen)
         if self.death_count > 0:
-            self.menu.update_message('new message')
+            self.menu.update_message('Game Over. Press any key to restart',
+                                    f"Your score: {self.score}",
+                                    f"Highest score: {self.max_score}",
+                                    f"Total deaths: {self.death_count}")
+
         icon = pygame.transform.scale(ICON,(80,120))
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = SCREEN_HEIGHT // 2
         self.screen.blit(icon,(half_screen_width -50 , half_screen_height -150))
         self.menu.draw(self.screen)
         self.menu.update(self)
     
     def update_score (self):
         self.score += 1
+        self.max_score = self.score
 
     def draw_score(self):
         font = pygame.font.Font(FONT_STYLE, 30)
@@ -106,3 +111,5 @@ class Game:
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
         self.screen.blit(text, text_rect)
+
+
