@@ -34,11 +34,9 @@ class Enemy(Sprite):
         self.move_x_for = random.randint(move_x_for[0], move_x_for[1])
         self.index = 0
         self.type = 'enemy'
-        self.shooting_time = random.randint(30,50)
+        self.shooting_time = random.randint(300,500)
         
 
-
-        
 
 
     def update(self, ships, game):
@@ -63,7 +61,6 @@ class Enemy(Sprite):
         self.index += 1
         if (self.index >= self.move_x_for and self.movement_x == 'right') or (self.rect.x >= SCREEN_WIDTH - self.ENEMY_WIDTH):
             self.movement_x = 'left'
-            self.movement_x2 = 'right'
             self.index = 0
         if (self.index >= self.move_x_for and self.movement_x == 'left') or (self.rect.x <= 10 ):
             self.movement_x = 'right'

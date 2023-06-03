@@ -10,9 +10,9 @@ class EnemyManager:
 
         for enemy in self.enemies:
             enemy.update(self.enemies, game)
-            if enemy.rect.colliderect(game.player.rect):
-                game.running = False
-                break
+            #if enemy.rect.colliderect(game.player.rect):
+                #game.running = False
+                #break
 
 
     def draw(self,screen):
