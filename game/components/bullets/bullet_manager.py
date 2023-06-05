@@ -1,4 +1,5 @@
 import pygame
+from game.components.bullets.bullet import Bullet
 from game.utils.constants import SHIELD_TYPE
 
 class BulletManager:
@@ -14,6 +15,9 @@ class BulletManager:
                     game.enemy_manager.enemies.remove(enemy)
                     game.score.update()
                     self.bullets.remove(bullet)
+                    if game.player.duplicate:
+                        duplicate_bullet = Bullet(game.player.duplicate)
+                        self.bullets.append(duplicate_bullet)
         
         for bullet in self.enemy_bullets:
             bullet.update(self.enemy_bullets)
@@ -21,6 +25,7 @@ class BulletManager:
                 if game.player.power_up_type != SHIELD_TYPE:
                     self.enemy_bullets.remove(bullet)
                     game.death_count.update()
+                    game.livess -= 1
                     game.playing = False
                     pygame.time.delay(1000)
                     break

@@ -9,7 +9,6 @@ class Menu:
         screen.fill((255, 255, 255))
         self.font = pygame.font.Font(FONT_STYLE, 30)
 
-
     def update(self, game):
         pygame.display.update()
         self.handle_events_on_menu(game)
@@ -19,6 +18,7 @@ class Menu:
             if event.type == pygame.QUIT:
                 game.playing = False
                 game.running = False
+                
             elif event.type == pygame.KEYDOWN:
                 game.run()
                 

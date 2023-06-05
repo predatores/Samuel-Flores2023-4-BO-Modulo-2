@@ -7,6 +7,7 @@ from game.components.bullets.bullet_manager import BulletManager
 from game.components.menu import Menu
 from game.components.counter import Counter
 from game.components.power_upds.power_up_manager import PowerUpManager
+from game.components.configurations.volumen import Volumen
 
 class Game:
     def __init__(self):
@@ -30,13 +31,27 @@ class Game:
         self.death_count = Counter()
         self.score = Counter()
         self.highest_score = Counter()
+        self.lives = Counter()
         self.power_up_manager = PowerUpManager()
+        self.livess = 2
+        self.volume = Volumen()
+        self.coins = Counter()
+        self.coins_game= 0
+
 
     def execute(self):
         self.running = True
         while self.running:
             if not self.playing:
-                self.show_menu()
+                if self.livess > 0:  
+                    pygame.mixer.music.play(-1)
+                    self.run()
+                    
+                else:
+                    self.show_menu()
+
+                    
+
         pygame.display.quit()
         pygame.quit()        
 
@@ -46,6 +61,7 @@ class Game:
         pygame.mixer.music.play(-1)
         self.playing = True
         while self.playing:
+            self.volume.Volumen_controls(self.screen) 
             self.events()
             self.update()
             self.draw()
@@ -61,6 +77,7 @@ class Game:
         self.enemy_manager.update(self)
         self.bullet_manager.update(self)
         self.power_up_manager.update(self)
+        self.power_up_manager.update_coins(self)
 
 
 
@@ -72,8 +89,11 @@ class Game:
         self.enemy_manager.draw(self.screen)
         self.bullet_manager.draw(self.screen)
         self.score.draw(self.screen)
+        self.lives.draw_lives(self.screen, self.player.lives,self.livess)
+        self.coins.draw_coins(self.screen , self.coins_game)
         self.power_up_manager.draw(self.screen)
         self.draw_power_up_time()
+        self.volume.Volumen_controls(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -93,31 +113,37 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
         half_screen_height = SCREEN_HEIGHT // 2
         self.menu.reset_screen_color(self.screen)
-        if self.death_count == 0:
-            self.menu.draw(self.screen,'Press any key to restart')
-        else:
-              self.update_highest_score()
-              self.menu.draw(self.screen,'Game Over. Press any key to restart')
-              self.menu.draw(self.screen,f"Your score: {self.score.count}",half_screen_width, 450,)
-              self.menu.draw(self.screen,f"Highest score: {self.highest_score.count}",half_screen_width, 500,)
-              self.menu.draw(self.screen,f"Total deaths: {self.death_count.count}",half_screen_width, 550,)
+    
+        if self.livess <= 0:
+            self.update_highest_score()
+            self.menu.draw(self.screen,'Game Over. Press any key to restart')
+            self.menu.draw(self.screen,f"Your score: {self.score.count}",half_screen_width, 450,)
+            self.menu.draw(self.screen,f"Highest score: {self.highest_score.count}",half_screen_width, 500,)
+            self.menu.draw(self.screen,f"Total deaths: {self.death_count.count}",half_screen_width, 550,)
+
+        if self.livess == 2:
+            self.menu.draw(self.screen,'Press any key to Start')
 
         icon = pygame.transform.scale(ICON,(80,120))
         self.screen.blit(icon,(half_screen_width -50 , half_screen_height -150))
         self.menu.update(self)
     
+
+    
     def update_highest_score(self):
         if self.score.count > self.highest_score.count:
             self.highest_score.set_count(self.score.count)
     
-
-
     def reset(self):
         self.enemy_manager.reset()
         self.bullet_manager.reset()
         self.score.reset()
         self.player.reset()
+        self.lives.reset()
         self.power_up_manager.reset()
+        self.coins_game == 0
+    
+
 
     def draw_power_up_time (self):
         if self.player.has_power_up:
@@ -129,5 +155,6 @@ class Game:
                 self.player.has_power_up = False
                 self.player.power_up_type = DEFAULT_TYPE
                 self.player.set_image()
+    
 
 

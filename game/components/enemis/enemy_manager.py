@@ -1,3 +1,4 @@
+from game.components import spaceship
 from game.components.enemis.enemy import Enemy
 import random
 
@@ -7,13 +8,11 @@ class EnemyManager:
 
     def update(self, game):
         self.add_enemy()
-
         for enemy in self.enemies:
             enemy.update(self.enemies, game)
-            #if enemy.rect.colliderect(game.player.rect):
-                #game.running = False
-                #break
-
+            if game.player.rect.colliderect(enemy.rect):
+                game.lives.set_count(game.lives.count - 1)
+               
 
     def draw(self,screen):
         for enemy in self.enemies :
@@ -28,6 +27,7 @@ class EnemyManager:
             y_speed = 3
             move_x_for = [50,120]
             enemy = Enemy(enemy_type, x_speed, y_speed, move_x_for)
+            
         if len(self.enemies)  < 1:
             self.enemies.append(enemy)
 

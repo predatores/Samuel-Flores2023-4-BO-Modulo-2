@@ -6,14 +6,12 @@ from game.utils.constants import ENEMY_1,SCREEN_HEIGHT,SCREEN_WIDTH,ENEMY_2,ENEM
 from game.components.bullets.bullet import Bullet
 
 class Enemy(Sprite):
-    ENEMY_WIDTH = 40
-    ENEMY_HEIGHT = 60
-    ENEMY_WIDTH2 = 60
-    ENEMY_HEIGHT2 = 80
+    ENEMY_WIDTH = 80
+    ENEMY_HEIGHT = 100
     Y_POS = 5
     X_POS_LIST = [50,100,150,200,250,300,350,400,450,500,550,1000,900,850,750]
 
-    SPEED_Y = 50
+    SPEED_Y = 5
     SPEED_X = 10
 
     MOV_X = {0: 'left', 1: 'right' }
@@ -34,16 +32,14 @@ class Enemy(Sprite):
         self.move_x_for = random.randint(move_x_for[0], move_x_for[1])
         self.index = 0
         self.type = 'enemy'
-        self.shooting_time = random.randint(300,500)
+        self.shooting_time = random.randint(1,5)
         
 
 
 
     def update(self, ships, game):
         self.shoot(game.bullet_manager)
-
         self.rect.y += self.speed_y
-
         if self.movement_x == 'left':
             self.rect.x -= self.speed_x
         else:
@@ -51,6 +47,8 @@ class Enemy(Sprite):
         self.change_movement_x()
         if self.rect.y >= SCREEN_HEIGHT:
             ships.remove(self)
+
+
         
 
     def draw(self,screen):
@@ -72,5 +70,5 @@ class Enemy(Sprite):
         if self.shooting_time <= current_time:
             bullet = Bullet(self)
             bullet_manager.add_bullet(bullet)
-            self.shooting_time += random.randint(100,150)
+            self.shooting_time += random.randint(500,1000)
     
